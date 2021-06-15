@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/starter-code/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+  
+  <title>Laurie Eshleman Planet Site</title>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">THE PLANETS</div>
+    <div class="menu">
+      <button onclick="changePlanet(this.value)" class="menuitem" value="0">MERCURY</button>
+      <button onclick="changePlanet(this.value)" class="menuitem" value="1">VENUS</button>
+      <button onclick="changePlanet(this.value)" class="menuitem" value="2">EARTH</button>
+      <button onclick="changePlanet(this.value)" class="menuitem" value="3">MARS</button>
+      <button onclick="changePlanet(this.value)" class="menuitem" value="4">JUPITER</button>
+      <button onclick="changePlanet(this.value)" class="menuitem" value="5">SATURN</button>
+      <button onclick="changePlanet(this.value)" class="menuitem" value="6">URANUS</button>
+      <button onclick="changePlanet(this.value)" class="menuitem" value="7">NEPTUNE</button>
+    </div>
+  </div>
+  <div class="container">
+    
+    <div class="main">
+      <div class="planet">
+        <img id="planet__img" src="./assets/planet-mercury.svg" alt="">
+      </div>
+      <div class="planetDescription">
+        <h1 id="planet__name">MERCURY</h1>
+        <p id="overview">Mercury is the smallest planet in the Solar System and the closest 
+          to the Sun. Its orbit around the Sun takes 87.97 Earth days, the 
+          shortest of all the Sun's planets. Mercury is one of four terrestrial 
+          planets in the Solar System, and is a rocky body like Earth.</p>
+        <p2 id="source">
+            <a id="wiki" href="https://en.wikipedia.org/wiki/Mercury_(planet)"><span>Source</span>Wikipedia</a>
+        </p2>
+        <div class="buttonGroup">
+          <button style="background-color:rgba(110, 46, 213,1)" id="overviewBtn" onclick="updatePage(this.value)" value="overview"><span>01</span>overview</button>
+          <button id="structureBtn" onclick="updatePage(this.value)" value="structure"><span>02</span>internal structure</button>
+          <button  id="geologyBtn" onclick="updatePage(this.value)" value="geology"><span>03</span>surface geology</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="stats">
+        <p>Rotation Time</p>
+        <h1 id="rotation">58.6 Days</h1>
+      </div>
+      <div class="stats">
+        <p>Revolution Time</p>
+        <h1 id="revolution">87.97 Days</h1>
+      </div>
+      <div class="stats">
+        <p>Radius</p>
+        <h1 id="radius">2,439.7 KM</h1>
+      </div>
+      <div class="stats">
+        <p>Average Temp.</p>
+        <h1 id="averageTemp">430°c</h1>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // dom variables
+    var id=0
+    let planet=document.getElementById("planet__img");
+    let title=document.getElementById("planet__name");
+    let wiki=document.getElementById("wiki");
+    let overview=document.getElementById("overview");
+    let radius = document.getElementById("radius");
+    let revolution = document.getElementById("revolution");
+    let rotation = document.getElementById("rotation");
+    let avgtemp = document.getElementById("averageTemp");
+    let overviewBtn=document.getElementById("overviewBtn");
+    let structureBtn=document.getElementById("structureBtn");
+    let geologyBtn=document.getElementById("geologyBtn");
+
+    // overviewBtn.style.backgroundColor="rgba(110, 46, 213,1)";
+
+    // Initial run fetch
+    fetch("./data.json")
+      .then(promise => promise.json())
+      .then((json)=>{
+        planet.src = json[id].images.planet;
+        title.innerText = json[id].name;
+        wiki.href = json[id].overview.source;
+        radius.innerText = json[id].radius;
+        overview.innerText=json[id].overview.content;        
+        revolution.innerText = json[id].revolution;
+        rotation.innerText = json[id].rotation;
+        avgtemp.innerText = json[id].temperature;
+      }
+    );
+    
+    // console.log("/starter-code/data.json")
+
+    // Runs when menu is clicked
+    function changePlanet(e){
+      id=e;
+      fetch("/starter-code/data.json")
+      .then(promise => promise.json())
+      .then((json)=>{
+        planet.src = json[id].images.planet;
+        title.innerText = json[id].name;
+        wiki.href = json[id].overview.source;
+        radius.innerText = json[id].radius;
+        overview.innerText=json[id].overview.content;
+        revolution.innerText = json[id].revolution;
+        rotation.innerText = json[id].rotation;
+        avgtemp.innerText = json[id].temperature;
+        }
+      );
+    }
+
+    function grabImage(e){
+      fetch("./data.json")
+      .then(promise => promise.json())
+      .then((json)=>{
+      switch(e){
+        case "geology":
+          return planet.src=json[id].images.geology
+        case "structure":
+          return planet.src=json[id].images.internal
+        default:
+          return planet.src=json[id].images.planet
+        }
+      })
+    }
+
+    function grabParagraph(e){
+      fetch("./data.json")
+      .then(promise => promise.json())
+      .then((json)=>{
+      switch(e){
+        case "geology":
+          return overview.innerText=json[id].geology.content
+        case "structure":
+          return overview.innerText=json[id].structure.content
+        default:
+          return overview.innerText=json[id].overview.content
+        }
+      })
+    }
+
+    function setButtonBackground(e){
+      console.log(e)
+      switch(e){
+        case "structure":
+          return setStructureButton()
+        case "geology":
+          return setGeologyButton()
+        default:
+          return setOverviewButton()
+      }
+    }
+   
+    function setGeologyButton(){
+      geologyBtn.style.backgroundColor="rgba(110, 46, 213,1)"
+      structureBtn.style.backgroundColor="rgba(110, 46, 213,0)"
+      overviewBtn.style.backgroundColor="rgba(110, 46, 213,0)"
+    }
+    function setStructureButton(){
+      geologyBtn.style.backgroundColor="rgba(110, 46, 213,0)"
+      structureBtn.style.backgroundColor="rgba(110, 46, 213,1)"
+      overviewBtn.style.backgroundColor="rgba(110, 46, 213,0)"
+    }
+    function setOverviewButton(){
+      geologyBtn.style.backgroundColor="rgba(110, 46, 213,0)"
+      structureBtn.style.backgroundColor="rgba(110, 46, 213,0)"
+      overviewBtn.style.backgroundColor="rgba(110, 46, 213,1)"
+    }
+
+    function updatePage(e){
+      grabParagraph(e);
+      grabImage(e);
+      setButtonBackground(e)
+
+    }
+
+
+  </script>
+
+</body>
+</html>
